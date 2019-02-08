@@ -1,0 +1,12 @@
+version: '2.2'
+services:
+  web:
+    build:
+      context: ../dockerfiles/web
+      dockerfile: "Dockerfile"
+    environment:
+      NODE_ENV: development
+    volumes:
+      - ../../app:/var/www/app
+    init: true
+    command: tail -f /dev/null
