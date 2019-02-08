@@ -5,8 +5,11 @@ services:
       context: ../dockerfiles/web
       dockerfile: "Dockerfile"
     environment:
-      NODE_ENV: development
+      - NODE_ENV=development
+    ports:
+      - 3333:3000
     volumes:
-      - ../../app:/var/www/app
+      - ../../../src:/opt/myapp/src
     init: true
-    command: tail -f /dev/null
+    command:
+      tail -f /dev/null
