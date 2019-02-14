@@ -1,0 +1,21 @@
+version: '2.2'
+services:
+  web:
+    build:
+      context: ../web
+    environment:
+      - NODE_ENV=development
+    ports:
+      - 3333:3000
+    volumes:
+      - ../../../src:/opt/myapp/src
+      - node_modules:/opt/myapp/src/node/node_modules
+    init: true
+    command:
+      /bin/sh -c
+      "npm run dev --prefix /opt/myapp/src/node
+      & tail -f /dev/null"
+
+volumes:
+  node_modules:
+    driver: 'local'

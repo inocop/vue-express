@@ -1,0 +1,6 @@
+{
+  "watch": ["./"],
+  "ext": "js json",
+  "ignore": ["tests/**/*", "public/**/*", "views/**/*", "package*.json"],
+  "exec": "npm run start"
+}
