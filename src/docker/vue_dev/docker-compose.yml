@@ -2,7 +2,7 @@ version: '2.2'
 services:
   web:
     build:
-      context: ../web
+      context: ../dockerfiles/web
     environment:
       - NODE_ENV=development
     ports:
@@ -10,6 +10,7 @@ services:
     volumes:
       - ../../../src:/opt/myapp/src
       - node_modules:/opt/myapp/src/node/node_modules
+      - vue_modules:/opt/myapp/src/vue/node_modules
     init: true
     command:
       /bin/sh -c
@@ -18,4 +19,6 @@ services:
 
 volumes:
   node_modules:
+    driver: 'local'
+  vue_modules:
     driver: 'local'
