@@ -14,7 +14,7 @@ app.set('views', path.join(__dirname, 'views'));
 app.set('view engine', 'ejs');
 
 /**
- * ログ設定
+ * HTTPリクエストのログ設定
  */
 //app.use(logger('dev')); // 色付け(ANSIエスケープシーケンス)は不要なのでコメントアウト
 app.use(logger('combined'));
@@ -40,6 +40,9 @@ app.use(function(err, req, res, next) {
   // set locals, only providing error in development
   res.locals.message = err.message;
   res.locals.error = req.app.get('env') === 'development' ? err : {};
+
+  // エラー内容をログに出力
+  console.error(err.stack)
 
   // render the error page
   res.status(err.status || 500);
