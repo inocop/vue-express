@@ -9,7 +9,7 @@
 
 cd /opt/myapp/src/node
 npm install
-npm install --prefix /opt/myapp/src/node/public/static
+npm install --prefix /opt/myapp/src/public/static
 
 
 
