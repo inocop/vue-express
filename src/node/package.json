@@ -4,6 +4,7 @@
   "private": true,
   "scripts": {
     "dev": "npx nodemon -L > output.log 2>&1",
+    "debug": "PORT=3333 node --inspect-brk=0.0.0.0:9229 ./bin/www",
     "start": "node ./bin/www"
   },
   "dependencies": {
