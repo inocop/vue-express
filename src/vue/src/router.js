@@ -21,10 +21,10 @@ export default new Router({
         import(/* webpackChunkName: "about" */ "./views/About.vue")
     },
     {
-      path: "/rooms",
-      name: "rooms",
+      path: "/marubatsu",
+      name: "marubatsu",
       component: () =>
-        import(/* webpackChunkName: "rooms" */ "./views/Rooms.vue")
+        import(/* webpackChunkName: "rooms" */ "./views/MaruBatsu.vue")
     }
   ]
 });

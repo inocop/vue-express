@@ -8,12 +8,12 @@ var indexRouter = require('./routes/index');
 var usersRouter = require('./routes/users');
 
 var app = express();
-app.io = require("socket.io")();
 
 /**
  * websocket設定
  */
-require('./routes/rooms')(app.io);
+app.io = require("socket.io")();
+require('./sockets/marubatsu')(app.io);
 
 
 // view engine setup

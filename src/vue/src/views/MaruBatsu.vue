@@ -39,7 +39,7 @@
       name: '',
       message: '',
       messages: [],
-      socket : io('localhost:8989/rooms/'),
+      socket : io('localhost:8989/marubatsu/'),
     }),
     methods: {
       // チャットを投稿する処理

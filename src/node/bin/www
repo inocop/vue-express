@@ -24,7 +24,7 @@ var server = http.createServer(app);
 /*
  * socket.ioをアタッチ
  */
-app.io.attach( server );
+app.io.attach(server);
 
 
 /**
