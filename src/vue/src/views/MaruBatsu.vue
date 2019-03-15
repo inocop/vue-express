@@ -23,18 +23,20 @@
       </div>
  -->
 
-      <div class="field is-grouped">
-        <div class="control" style="padding-top: 0.375em">
-          <label class="label">Room名</label>
+      <form>
+        <div class="field is-grouped">
+          <p class="control" style="padding-top: 0.375em">
+            <label class="label">Room名</label>
+          </p>
+          <p class="control is-expanded">
+            <input class="input" type="text" placeholder="" v-model="message">
+          </p>
+          <p class="control">
+            <button class="button is-primary" type="submit" @click="sendMessage">登録</button>
+          </p>
         </div>
-        <p class="control is-expanded">
-          <input class="input" type="text" placeholder="" v-model="message">
-        </p>
-        <p class="control">
-          <a class="button is-primary" @click="sendMessage">登録</a>
-        </p>
-      </div>
-
+        <p class="help is-danger is-marginless">{{ invalid_message }} &nbsp;</p>
+      </form>
 
       <!-- 投稿フォーム -->
 <!--
@@ -57,7 +59,7 @@
       </form>
 -->
 
-      <h2 style="margin-top: 2rem">Maru Batsu Rooms</h2>
+      <h2 style="margin-top: 1rem">Maru Batsu Rooms</h2>
 
       <!-- チャットの表示 -->
       <div v-for="(row, index) in messages" :key="index">
@@ -77,17 +79,25 @@
       name: '',
       message: '',
       messages: [],
+      invalid_message: '',
       socket : io('localhost:8989/marubatsu/'),
     }),
     methods: {
       // チャットを投稿する処理
       sendMessage(e) {
         e.preventDefault();
+
+        if (!this.message) {
+          this.invalid_message = "Room名を入力してください"
+          return
+        }
+
         this.socket.emit('POST_MESSAGE', {
             name: this.name,
             message: this.message
         });
         this.message = ''
+        this.invalid_message = ''
       },
     },
     mounted(){
