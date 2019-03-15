@@ -29,13 +29,13 @@
             <label class="label">Room名</label>
           </p>
           <p class="control is-expanded">
-            <input class="input" type="text" placeholder="" v-model="message">
+            <input class="input" type="text" placeholder="" v-model="name">
           </p>
           <p class="control">
-            <button class="button is-primary" type="submit" @click="sendMessage">登録</button>
+            <button class="button is-primary" type="submit" @click="createRoom">登録</button>
           </p>
         </div>
-        <p class="help is-danger is-marginless">{{ invalid_message }} &nbsp;</p>
+        <p class="help is-danger is-marginless">{{ invalid_name }} &nbsp;</p>
       </form>
 
       <!-- 投稿フォーム -->
@@ -62,8 +62,8 @@
       <h2 style="margin-top: 1rem">Maru Batsu Rooms</h2>
 
       <!-- チャットの表示 -->
-      <div v-for="(row, index) in messages" :key="index">
-        <router-link to="/marubatsu/1">{{ row.message }}</router-link>
+      <div v-for="(row, index) in rooms" :key="index">
+        <router-link to="/marubatsu/1">{{ row.name }}</router-link>
       </div>
 
     </div>
@@ -76,36 +76,39 @@
   export default {
     name: 'Index',
     data: () => ({
+      rooms: [],
       name: '',
-      message: '',
-      messages: [],
-      invalid_message: '',
+      invalid_name: '',
       socket : io('localhost:8989/marubatsu/'),
     }),
     methods: {
-      // チャットを投稿する処理
-      sendMessage(e) {
+      createRoom(e) {
         e.preventDefault();
-
-        if (!this.message) {
-          this.invalid_message = "Room名を入力してください"
+        if (!this.name) {
+          this.invalid_name = "Room名を入力してください"
           return
         }
 
-        this.socket.emit('POST_MESSAGE', {
-            name: this.name,
-            message: this.message
+        // 新規Roomの登録リクエスト
+        this.socket.emit('CREATE_ROOM', {
+          name: this.name,
         });
-        this.message = ''
-        this.invalid_message = ''
-      },
+        this.name = ''
+        this.invalid_name = ''
+      }
     },
     mounted(){
-      // 投稿されたデータの取得
-      this.socket.on('MESSAGE', (data) => {
-        console.log(data);
-        this.messages = [...this.messages, data];
+      // CREATE_ROOMのレシーバー
+      this.socket.on('CREATED', (room) => {
+        this.rooms = [...this.rooms, room];
       })
+      // GET_ROOMSのレシーバー
+      this.socket.on('MESSAGE', (rooms) => {
+        this.rooms = rooms;
+      })
+
+      // Roomリストをリクエスト
+      this.socket.emit('GET_ROOMS')
     },
 }
 </script>
