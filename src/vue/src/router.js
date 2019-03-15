@@ -24,7 +24,17 @@ export default new Router({
       path: "/marubatsu",
       name: "marubatsu",
       component: () =>
-        import(/* webpackChunkName: "rooms" */ "./views/MaruBatsu.vue")
+        import(/* webpackChunkName: "marubatsu" */ "./views/MaruBatsu.vue")
+    },
+    {
+      path: "/marubatsu/:id",
+      name: "marubatsu_play",
+      meta: { layout: 'none'},
+      component: () =>
+        import(/* webpackChunkName: "marubatsu_play" */ "./views/MaruBatsuPlay.vue"),
+      props: route => ({
+        id: Number(route.params.id)
+      })
     }
   ]
 });
