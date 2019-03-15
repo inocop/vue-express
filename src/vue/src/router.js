@@ -32,9 +32,11 @@ export default new Router({
       meta: { layout: 'none'},
       component: () =>
         import(/* webpackChunkName: "marubatsu_play" */ "./views/MaruBatsuPlay.vue"),
-      props: route => ({
-        id: Number(route.params.id)
-      })
-    }
+      props: route => ({id: Number(route.params.id)}),
+    },
+    { 
+      path: '*', 
+      redirect: '/'
+    },
   ]
 });

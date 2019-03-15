@@ -61,9 +61,9 @@
 
       <h2 style="margin-top: 1rem">Maru Batsu Rooms</h2>
 
-      <!-- チャットの表示 -->
+      <!-- Room一覧の表示 -->
       <div v-for="(row, index) in rooms" :key="index">
-        <router-link to="/marubatsu/1">{{ row.name }}</router-link>
+        <router-link :to="{ name: 'marubatsu_play', params: { id: row.id }}">{{ row.name }}</router-link>
       </div>
 
     </div>
@@ -71,47 +71,40 @@
 </template>
 
 <script>
-  import io from 'socket.io-client';
- 
   export default {
-    name: 'Index',
     data: () => ({
       rooms: [],
       name: '',
       invalid_name: '',
-      socket : io('localhost:8989/marubatsu/'),
     }),
     methods: {
       createRoom(e) {
-        e.preventDefault();
+        e.preventDefault()
+
         if (!this.name) {
           this.invalid_name = "Room名を入力してください"
           return
         }
 
         // 新規Roomの登録リクエスト
-        this.socket.emit('CREATE_ROOM', {
-          name: this.name,
-        });
+        this.$socket.emit('CREATE_ROOM', { name: this.name });
         this.name = ''
         this.invalid_name = ''
       }
     },
     mounted(){
-      // CREATE_ROOMのレシーバー
-      this.socket.on('CREATED', (room) => {
-        this.rooms = [...this.rooms, room];
-      })
-      // GET_ROOMSのレシーバー
-      this.socket.on('MESSAGE', (rooms) => {
-        this.rooms = rooms;
+      // レシーバー登録
+      this.$socket.on('CREATE_ROOM_RECEIVER', (room) => {
+        this.rooms = [...this.rooms, room]
       })
 
       // Roomリストをリクエスト
-      this.socket.emit('GET_ROOMS')
+      this.$socket.emit('GET_ROOMS', (error, rooms) => {
+        if (!error) this.rooms = rooms;
+      })
     },
 }
 </script>
- 
+
 <style scoped>
 </style>
