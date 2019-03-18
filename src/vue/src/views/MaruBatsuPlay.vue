@@ -31,8 +31,8 @@
       }
     },
     beforeRouteLeave (to, from, next) {
-      console.log("LEAVE_ROOM : " + this.id)
-      this.$socket.emit('LEAVE_ROOM', this.id);
+      console.log("LEAVE_PLAY_ROOM : " + this.id)
+      this.$socket.emit('LEAVE_PLAY_ROOM');
       next();
     },
     mounted(){

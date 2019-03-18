@@ -27,13 +27,23 @@ module.exports = function(io) {
     socket.on('GET_ROOM_DETAIL', (room_id, callback) => {
       console.log("GET_ROOM_DETAIL");
 
-      socket.join(room_id);
+      socket.join(`playroom/${room_id}`);
       if (room_details[room_id]) {
         callback(null, room_details[room_id])
       }
     })
-    socket.on('LEAVE_ROOM', (room_id) => {
-      socket.leave(room_id);
+
+    socket.on('LEAVE_PLAY_ROOM', () => {
+      var rooms = marubatsu_socket.adapter.sids[socket.id];
+      console.log("LEAVE_PLAY_ROOM")
+      console.log(JSON.stringify(rooms))
+
+      for (var room_id in rooms) {
+        if (room_id !== '' && room_id.startsWith('playroom/')) {
+          socket.leave(room_id);
+          console.log("leave room :" + room_id)
+        }
+      }
     })
 
     socket.on('POST_ROOM_DETAIL', (room_id, data) => {
@@ -42,7 +52,7 @@ module.exports = function(io) {
       if (!room_details[room_id]) room_details[room_id] = []
 
       room_details[room_id] = [...room_details[room_id], data]
-      marubatsu_socket.in(room_id).emit('POST_ROOM_DETAIL_RECEIVER', data)
+      marubatsu_socket.in(`playroom/${room_id}`).emit('POST_ROOM_DETAIL_RECEIVER', data)
     })
   });
 
