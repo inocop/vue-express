@@ -30,16 +30,16 @@
         this.$socket.emit('POST_ROOM_DETAIL', this.id, "batsu");
       }
     },
-    beforeRouteLeave (to, from, next) {
-      console.log("LEAVE_PLAY_ROOM : " + this.id)
-      this.$socket.emit('LEAVE_PLAY_ROOM');
-      next();
+     beforeRouteLeave (to, from, next) {
+       this.$socket.off('POST_ROOM_DETAIL_RECEIVER')
+       this.$socket.emit('LEAVE_PLAY_ROOM');
+       next();
     },
     mounted(){
       // レシーバー登録
       this.$socket.on('POST_ROOM_DETAIL_RECEIVER', (room_detail) => {
         this.room_details = [...this.room_details, room_detail]
-        console.log(this.room_details)
+        console.log(room_detail)
       })
 
       this.$socket.emit('GET_ROOM_DETAIL', this.id, (error, room_details) => {
