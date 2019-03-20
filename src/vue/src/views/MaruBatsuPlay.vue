@@ -7,7 +7,7 @@
 
 
   <!-- 〇× -->
-  <div v-for="row in room_details" :key="row.id">
+  <div v-for="row in playdata" :key="row.id">
     {{ row }}
   </div>
 </div>
@@ -20,7 +20,7 @@
       id: Number
     },
     data: () => ({
-      room_details: [],
+      playdata: [],
     }),
     methods: {
       postMaru(e) {
@@ -37,14 +37,19 @@
     },
     mounted(){
       // レシーバー登録
-      this.$socket.on('POST_ROOM_DETAIL_RECEIVER', (room_detail) => {
-        this.room_details = [...this.room_details, room_detail]
-        console.log(room_detail)
+      this.$socket.on('POST_ROOM_DETAIL_RECEIVER', (playdata) => {
+        this.playdata = [...this.playdata, playdata]
+        console.log(playdata)
       })
 
-      this.$socket.emit('GET_ROOM_DETAIL', this.id, (error, room_details) => {
-        if (!error) this.room_details = room_details;
-        console.log(this.room_details)
+      this.$socket.emit('GET_ROOM_DETAIL', this.id, (error, playdata) => {
+        if (!error) {
+          this.playdata = playdata;
+        }else{
+          console.log(error.message)
+        }
+
+        console.log(this.playdata)
       })
     }
   }

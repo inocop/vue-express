@@ -1,7 +1,9 @@
+
+const Room = require('../models/room');
+
 module.exports = function(io) {
 
-  var rooms = [];
-  var room_details = [];
+  const rooms = [];
 
   var marubatsu_socket = io.of('/marubatsu/')
   marubatsu_socket.on('connection', (socket) => {
@@ -12,35 +14,48 @@ module.exports = function(io) {
       console.log("CREATE_ROOM");
       console.log(`posted[name:${ data.name }]`)
 
-      room = { id: rooms.length, name: data.name }
-      rooms.push(room)
-      marubatsu_socket.emit('CREATE_ROOM_RECEIVER', room)
+      // 10部屋以上は作成しない
+      if (rooms.length >= 10) {
+        marubatsu_socket.to(socket.id).emit('CREATE_ROOM_RECEIVER', { message: "10部屋以上は作成できません" })
+        return
+      }
+
+      room = new Room(rooms.length, data.name)
+      rooms[room.id] = room
+
+      marubatsu_socket.emit('CREATE_ROOM_RECEIVER', null, room.params)
     })
 
     // ルーム一覧取得
     socket.on('GET_ROOMS', (callback) => {
       console.log("GET_ROOMS");
-      callback(null, rooms)
+      callback(null, Object.keys(rooms).map(id => rooms[id].params))
     })
 
     // マルバツルーム入室
-    socket.on('GET_ROOM_DETAIL', (room_id, callback) => {
+    socket.on('GET_ROOM_DETAIL', (roomId, callback) => {
       console.log("GET_ROOM_DETAIL");
+      targetRoom = rooms[roomId]
 
-      socket.join(`playroom_${room_id}`);
-      if (room_details[room_id]) {
-        callback(null, room_details[room_id])
+      if (targetRoom.player1 && targetRoom.player2) {
+        callback({ message: "入室できません。" }, null)
+        return
       }
+      targetRoom.setPlayer(socket.id)
+
+      socket.join(`playroom_${roomId}`);
+      callback(null, targetRoom.playdata)
     })
 
     // マルバツ送信
-    socket.on('POST_ROOM_DETAIL', (room_id, data) => {
+    socket.on('POST_ROOM_DETAIL', (roomId, data) => {
       console.log("POST_ROOM_DETAIL");
+      targetRoom = rooms[roomId]
 
-      if (!room_details[room_id]) room_details[room_id] = []
-
-      room_details[room_id] = [...room_details[room_id], data]
-      marubatsu_socket.in(`playroom_${room_id}`).emit('POST_ROOM_DETAIL_RECEIVER', data)
+      if (targetRoom.checkPlayer(socket.id)) {
+        targetRoom.setPlayData(data)
+        marubatsu_socket.in(`playroom_${roomId}`).emit('POST_ROOM_DETAIL_RECEIVER', data)
+      }
     })
 
     // マルバツルーム退出
@@ -48,9 +63,9 @@ module.exports = function(io) {
       console.log("LEAVE_PLAY_ROOM");
 
       var rooms = marubatsu_socket.adapter.sids[socket.id];
-      for (var room_id in rooms) {
-        if (room_id && room_id.startsWith('playroom_')) {
-          socket.leave(room_id);
+      for (var roomId in rooms) {
+        if (roomId && roomId.startsWith('playroom_')) {
+          socket.leave(roomId);
         }
       }
     })

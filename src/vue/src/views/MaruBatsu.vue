@@ -61,10 +61,24 @@
 
       <h2 style="margin-top: 1rem">Maru Batsu Rooms</h2>
 
-      <!-- Room一覧の表示 -->
-      <div v-for="(row, index) in rooms" :key="index">
-        <router-link :to="{ name: 'marubatsu_play', params: { id: row.id }}">{{ row.name }}</router-link>
-      </div>
+      <table class="table is-fullwidth">
+        <thead>
+          <tr>
+            <th>Room名</th>
+            <th>ステータス</th>
+            <th></th>
+          </tr>
+        </thead>
+
+        <tbody>
+          <!-- Room一覧の表示 -->
+          <tr v-for="(row, index) in rooms" :key="index">
+            <th>{{ row.name }}</th>
+            <th>新規</th>
+            <th><router-link :to="{name: 'marubatsu_play', params: { id: row.id }}">入室</router-link></th>
+          </tr>
+        </tbody>
+      </table>
 
     </div>
   </div>
@@ -94,8 +108,12 @@
     },
     mounted(){
       // レシーバー登録
-      this.$socket.on('CREATE_ROOM_RECEIVER', (room) => {
-        this.rooms = [...this.rooms, room]
+      this.$socket.on('CREATE_ROOM_RECEIVER', (error, room) => {
+        if (!error){
+          this.rooms = [...this.rooms, room]
+        } else {
+          this.invalid_name = error.message
+        }
       })
 
       // Roomリストをリクエスト
