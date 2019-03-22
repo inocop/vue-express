@@ -52,10 +52,9 @@ module.exports = function(io) {
       console.log("POST_ROOM_DETAIL");
       targetRoom = gameRooms[roomId]
 
-      if (targetRoom.checkPlayer(socket.id)) {
-        targetRoom.setPlayData(data)
+      targetRoom.setPlayData(socket.id, data, () => {
         marubatsu_socket.in(`playroom_${roomId}`).emit('POST_ROOM_DETAIL_RECEIVER', data)
-      }
+      })
     })
 
     // マルバツルーム退出

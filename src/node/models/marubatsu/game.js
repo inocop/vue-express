@@ -28,12 +28,14 @@ module.exports = class Game {
     }
   }
 
-  checkPlayer(socketId){
-    return (socketId === this.player1 || socketId === this.player2)
-  }
+  setPlayData(socketId, data, callback) {
+    //if (![this.player1, this.player2].filter(p => p != null).includes(socketId))
+    if (socketId !== this.player1 && socketId !== this.player2) {
+      return
+    }
 
-  setPlayData(data) {
     this.playdata = [...this.playdata, data]
     this.gameState.addInput({y: data.y, x: data.x, value: data.value})
+    callback()
   }
 }
