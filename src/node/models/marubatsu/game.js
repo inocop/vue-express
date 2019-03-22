@@ -34,8 +34,9 @@ module.exports = class Game {
       return
     }
 
-    this.playdata = [...this.playdata, data]
-    this.gameState.addInput({y: data.y, x: data.x, value: data.value})
-    callback()
+    //this.playdata = [...this.playdata, data]
+    if (this.gameState.addInput({y: data.y, x: data.x, value: data.value})){
+      callback()
+    }
   }
 }

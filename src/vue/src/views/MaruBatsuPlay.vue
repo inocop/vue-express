@@ -24,10 +24,10 @@
     }),
     methods: {
       postMaru(e) {
-        this.$socket.emit('POST_ROOM_DETAIL', this.id, "maru");
+        this.$socket.emit('POST_ROOM_DETAIL', this.id, {y: 0, x: 0, value: "maru"});
       },
       postBatsu(e){
-        this.$socket.emit('POST_ROOM_DETAIL', this.id, "batsu");
+        this.$socket.emit('POST_ROOM_DETAIL', this.id, {y: 1, x: 1, value: "batsu"});
       }
     },
      beforeRouteLeave (to, from, next) {

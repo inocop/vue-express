@@ -36,6 +36,7 @@ module.exports = function(io) {
     socket.on('GET_ROOM_DETAIL', (roomId, callback) => {
       console.log("GET_ROOM_DETAIL");
       targetRoom = gameRooms[roomId]
+      if (!targetRoom) return
 
       if (targetRoom.player1 && targetRoom.player2) {
         callback({ message: "入室できません。" }, null)
@@ -51,6 +52,7 @@ module.exports = function(io) {
     socket.on('POST_ROOM_DETAIL', (roomId, data) => {
       console.log("POST_ROOM_DETAIL");
       targetRoom = gameRooms[roomId]
+      if (!targetRoom) return
 
       targetRoom.setPlayData(socket.id, data, () => {
         marubatsu_socket.in(`playroom_${roomId}`).emit('POST_ROOM_DETAIL_RECEIVER', data)

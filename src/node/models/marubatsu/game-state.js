@@ -2,7 +2,9 @@ module.exports = class GameState {
 
   constructor () {
     // 3x3の二次元配列を生成
+    this.inputMap = []
     for (var y=0; y < 3; y++) {
+      this.inputMap[y] = []
       for (var x=0; x < 3; x++) {
         this.inputMap[y][x] = ""
       }
@@ -11,60 +13,64 @@ module.exports = class GameState {
     this.allowValues = [ "maru", "batsu" ];
     this.state = "play" /* play, end, draw */
     this.stateMessage = ""
+    this.winner = null
   }
 
   // 入力値を登録
   addInput({y, x, value = ""} = {}) {
-    if ((y < 0 || 3 < y) && (x < 0 || 3 < x)) {
-      //throw new ArgumentOutOfRangeException("positionは0から8の間を指定してください。");
-      return
+    if ((y < 0 || 3 <= y) && (x < 0 || 3 <= x)) {
+      console.log("3x3の範囲を指定してください。")
+      return false
     }
-    if (!this.inputMap[y][x]) {
-      //throw new ArgumentException("既に入力済みのpositionを指定しています。");
-      return
+    if (this.inputMap[y][x]) {
+      console.log("既に入力済みの(y, x)を指定しています。")
+      return false
     }
-
     if (!value || !this.allowValues.includes(value)) {
-      //throw new ArgumentException("maru、またはbatsu以外は入力できません。");
-      return
+      console.log("maru、またはbatsu以外は入力できません。")
+      return false
     }
 
     this.inputMap[y][x] = value;
-    judgeState();
+    this.judgeState();
+    return true
   }
 
   // 〇×ゲームの状態判定
   judgeState() {
-    _judgeHorizontal()
-    _judgeVertical()
-    _judgeDiagonal()
+    this._judgeHorizontal()
+    this._judgeVertical()
+    this._judgeDiagonal()
 
     if (this.state === "end") {
       return
     }
 
     // 未決着で空白が無ければ引き分け
-    if (this.inputMap.Count(p => p.Value == "") == 0) {
-      // this.state = "draw";
-      // this.stateMessage = "引き分け";
+    for (var y=0; y<this.inputMap.length; y++){
+      for (var x=0; x<this.inputMap[y].length; x++){
+        if (this.inputMap[y][x] === "") {
+          this.state = "play";
+          this.stateMessage = "プレイ継続";
+          return
+        }
+      }
     }
-    else {
-      // this.state = "play";
-      // this.stateMessage = "プレイ継続";
-    }
+    this.state = "draw";
+    this.stateMessage = "引き分け";
   }
 
   /**
    * 横ラインの勝敗判定
    */
   _judgeHorizontal() {
-    for (y=0; y<this.inputMap.length; y++){
+    for (var y=0; y<this.inputMap.length; y++){
 
       var lineValue = []
-      for (x=0; x<this.inputMap[y].length; x++){
+      for (var x=0; x<this.inputMap[y].length; x++){
         lineValue.push(this.inputMap[y][x])
       }
-      _judgeWinner(lineValue)
+      this._judgeWinner(lineValue)
     }
   }
 
@@ -72,13 +78,13 @@ module.exports = class GameState {
    * 縦ラインの勝敗判定
    */
   _judgeVertical() {
-    for (x=0; x<this.inputMap[0].length; x++){
+    for (var x=0; x<this.inputMap[0].length; x++){
 
       var lineValue = []
-      for (y=0; y<this.inputMap[x].length; y++){
+      for (var y=0; y<this.inputMap[x].length; y++){
         lineValue.push(this.inputMap[y][x])
       }
-      _judgeWinner(lineValue)
+      this._judgeWinner(lineValue)
     }
   }
 
@@ -88,17 +94,17 @@ module.exports = class GameState {
   _judgeDiagonal() {
     // 右下がり
     var lineValue = []
-    for (i=0; i<this.inputMap.length; i++) {
+    for (var i=0; i<this.inputMap.length; i++) {
       lineValue.push(this.inputMap[i][i])
     }
-    _judgeWinner(lineValue)
+    this._judgeWinner(lineValue)
 
     // 右上がり
     var lineValue = []
-    for (i=0; i<this.inputMap.length; i++){
-      lineValue.push(this.inputMap[this.inputMap.length - i][i])
+    for (var i=0; i<this.inputMap.length; i++){
+      lineValue.push(this.inputMap[this.inputMap.length - (1 + i)][i])
     }
-    _judgeWinner(lineValue)
+    this._judgeWinner(lineValue)
   }
 
   /**
@@ -107,5 +113,16 @@ module.exports = class GameState {
    */
   _judgeWinner(lineValue = []) {
     if (this.state !== "play") return
+
+    if (lineValue.length === lineValue.filter(value => value === "maru").length) {
+      this.state = "end"
+      this.stateMessage = "maruの勝ち";
+      this.winner = "maru"
+    }
+    else if (lineValue.length === lineValue.filter(value => value === "batsu").length) {
+      this.state = "end"
+      this.stateMessage = "batsuの勝ち";
+      this.winner = "batsu"
+    }
   }
 }
