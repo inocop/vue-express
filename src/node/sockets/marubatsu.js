@@ -1,6 +1,7 @@
 
-const Game = require('../models/marubatsu/Game');
-const GameRooms = require('../models/marubatsu/GameRooms');
+const Game = require('../models/marubatsu/Game')
+const GameRooms = require('../models/marubatsu/GameRooms')
+const EntryRoom = require('../usecase/marubatsu/EntryRoom')
 
 module.exports = function(io) {
 
@@ -21,9 +22,7 @@ module.exports = function(io) {
         marubatsu_socket.emit('CREATE_ROOM_RECEIVER', null, game.params)
       })
       .catch((error) => {
-        if (error instanceof RangeError) {
-          marubatsu_socket.to(socket.id).emit('CREATE_ROOM_RECEIVER', error)
-        }
+        marubatsu_socket.to(socket.id).emit('CREATE_ROOM_RECEIVER', { message: error.message })
       })
     })
 
@@ -44,7 +43,7 @@ module.exports = function(io) {
         callback(null, targetRoom.playdata)
       })
       .catch((error) => {
-        if (error.message) callback(error, null)
+        callback({ message: error.message })
       })
     })
 

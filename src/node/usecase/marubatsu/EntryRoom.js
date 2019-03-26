@@ -10,16 +10,14 @@ module.exports = class EntryRoom {
 
   exec() {
     return new Promise((resolve, reject) => {
-      if (!(game instanceof Game)) {
-        reject(new TypeError())
-        return
-      }
-      if (game.player1 && game.player2) {
+      if (!(this.game instanceof Game)) return
+
+      if (this.game.player1 && this.game.player2) {
         reject(new Error("入室できません。"))
         return
       }
 
-      game.setPlayer(this.socket_id)
+      this.game.setPlayer(this.socket_id)
       resolve()
     })
   }

@@ -2,8 +2,8 @@ const GameState = require('./GameState');
 
 module.exports = class Game {
 
-  constructor (id, name) {
-    this.id        = id
+  constructor (name) {
+    this.id        = null
     this.name      = name
     this.player1   = null
     this.player2   = null

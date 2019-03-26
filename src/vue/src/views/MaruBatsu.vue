@@ -72,10 +72,10 @@
 
         <tbody>
           <!-- Room一覧の表示 -->
-          <tr v-for="(row, index) in rooms" :key="index">
-            <th>{{ row.name }}</th>
+          <tr v-for="(room, index) in gameRooms" :key="index">
+            <th>{{ room.name }}</th>
             <th>新規</th>
-            <th><router-link :to="{name: 'marubatsu_play', params: { id: row.id }}">入室</router-link></th>
+            <th><router-link :to="{name: 'marubatsu_play', params: { id: room.id }}">入室</router-link></th>
           </tr>
         </tbody>
       </table>
@@ -87,7 +87,7 @@
 <script>
   export default {
     data: () => ({
-      rooms: [],
+      gameRooms: [],
       name: '',
       invalid_name: '',
     }),
@@ -110,15 +110,15 @@
       // レシーバー登録
       this.$socket.on('CREATE_ROOM_RECEIVER', (error, room) => {
         if (!error){
-          this.rooms = [...this.rooms, room]
+          this.gameRooms = [...this.gameRooms, room]
         } else {
           this.invalid_name = error.message
         }
       })
 
       // Roomリストをリクエスト
-      this.$socket.emit('GET_ROOMS', (error, rooms) => {
-        if (!error) this.rooms = rooms;
+      this.$socket.emit('GET_ROOMS', (error, gameRooms) => {
+        if (!error) this.gameRooms = gameRooms
       })
     },
 }
