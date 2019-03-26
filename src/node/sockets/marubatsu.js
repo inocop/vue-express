@@ -36,17 +36,16 @@ module.exports = function(io) {
     // マルバツルーム入室
     socket.on('GET_ROOM_DETAIL', (roomId, callback) => {
       console.log("GET_ROOM_DETAIL");
+
       targetRoom = gameRooms.getRoom(roomId)
-      if (!targetRoom) return
-
-      if (targetRoom.player1 && targetRoom.player2) {
-        callback({ message: "入室できません。" }, null)
-        return
-      }
-      targetRoom.setPlayer(socket.id)
-
-      socket.join(`playroom_${roomId}`);
-      callback(null, targetRoom.playdata)
+      new EntryRoom(targetRoom, socket.id).exec()
+      .then(() => {
+        socket.join(`playroom_${roomId}`);
+        callback(null, targetRoom.playdata)
+      })
+      .catch((error) => {
+        if (error.message) callback(error, null)
+      })
     })
 
     // マルバツ送信
