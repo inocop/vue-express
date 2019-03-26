@@ -1,4 +1,4 @@
-const GameState = require('./game-state');
+const GameState = require('./GameState');
 
 module.exports = class Game {
 
@@ -15,8 +15,8 @@ module.exports = class Game {
     return { id: this.id, name: this.name }
   }
 
-  get state(){
-    return this.gameState.state
+  get isGameEnd(){
+    return this.gameState.gameEnd
   }
 
   setPlayer(socketId) {
@@ -29,6 +29,8 @@ module.exports = class Game {
   }
 
   setPlayData(socketId, data, callback) {
+    if (this.isGameEnd) return
+
     //if (![this.player1, this.player2].filter(p => p != null).includes(socketId))
     if (socketId !== this.player1 && socketId !== this.player2) {
       return

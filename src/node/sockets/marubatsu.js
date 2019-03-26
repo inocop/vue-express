@@ -1,5 +1,5 @@
 
-const Game = require('../models/marubatsu/game');
+const Game = require('../models/marubatsu/Game');
 
 module.exports = function(io) {
 

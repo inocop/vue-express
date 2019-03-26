@@ -1,3 +1,7 @@
+const INPUT_MARU   = "maru"
+const INPUT_BATSU  = "batsu"
+const INPUT_VALUES = [ INPUT_MARU, INPUT_BATSU ]
+
 module.exports = class GameState {
 
   constructor () {
@@ -10,10 +14,9 @@ module.exports = class GameState {
       }
     }
 
-    this.allowValues = [ "maru", "batsu" ];
-    this.state = "play" /* play, end, draw */
-    this.stateMessage = ""
-    this.winner = null
+    this.gameEnd = false
+    this.message = null
+    this.winner  = null
   }
 
   // 入力値を登録
@@ -26,7 +29,7 @@ module.exports = class GameState {
       console.log("既に入力済みの(y, x)を指定しています。")
       return false
     }
-    if (!value || !this.allowValues.includes(value)) {
+    if (!value || !INPUT_VALUES.includes(value)) {
       console.log("maru、またはbatsu以外は入力できません。")
       return false
     }
@@ -42,7 +45,8 @@ module.exports = class GameState {
     this._judgeVertical()
     this._judgeDiagonal()
 
-    if (this.state === "end") {
+    if (this.gameEnd) {
+      console.log(this.message)
       return
     }
 
@@ -50,14 +54,15 @@ module.exports = class GameState {
     for (var y=0; y<this.inputMap.length; y++){
       for (var x=0; x<this.inputMap[y].length; x++){
         if (this.inputMap[y][x] === "") {
-          this.state = "play";
-          this.stateMessage = "プレイ継続";
+          this.gameEnd = false
+          this.message = "プレイ継続"
           return
         }
       }
     }
-    this.state = "draw";
-    this.stateMessage = "引き分け";
+    this.gameEnd = true;
+    this.message = "引き分け";
+    console.log(this.message)
   }
 
   /**
@@ -112,17 +117,17 @@ module.exports = class GameState {
    * @param {*} lineValue
    */
   _judgeWinner(lineValue = []) {
-    if (this.state !== "play") return
+    if (this.gameEnd) return
 
-    if (lineValue.length === lineValue.filter(value => value === "maru").length) {
-      this.state = "end"
-      this.stateMessage = "maruの勝ち";
-      this.winner = "maru"
+    if (lineValue.length === lineValue.filter(value => value === INPUT_MARU).length) {
+      this.gameEnd = true
+      this.message = "maruの勝ち"
+      this.winner = INPUT_MARU
     }
-    else if (lineValue.length === lineValue.filter(value => value === "batsu").length) {
-      this.state = "end"
-      this.stateMessage = "batsuの勝ち";
-      this.winner = "batsu"
+    else if (lineValue.length === lineValue.filter(value => value === INPUT_BATSU).length) {
+      this.gameEnd = true
+      this.message = "batsuの勝ち"
+      this.winner = INPUT_BATSU
     }
   }
 }
