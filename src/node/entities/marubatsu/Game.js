@@ -1,14 +1,16 @@
+const Const = require('../../../common/consts/MarubatsuConst');
 const GameState = require('./GameState');
 
 module.exports = class Game {
 
   constructor (name) {
-    this.id        = null
-    this.name      = name
-    this.player1   = null
-    this.player2   = null
-    this.playdata  = []
-    this.gameState = new GameState()
+    this.id          = null
+    this.name        = name
+    this.player1     = null
+    this.player2     = null
+    this.maru_player = null
+    this.playdata    = []
+    this.gameState   = new GameState()
   }
 
   get params(){
@@ -16,7 +18,7 @@ module.exports = class Game {
   }
 
   get isGameEnd(){
-    return this.gameState.gameEnd
+    return Const.STATE_END(this.gameState.state)
   }
 
   setPlayer(socketId) {
@@ -28,17 +30,19 @@ module.exports = class Game {
     }
   }
 
-  setPlayData(socketId, data, callback) {
-    if (this.isGameEnd) return
+  setPlayData(socketId, data) {
+    // 初回入力したプレイヤーを〇とする
+    if (this.gameState.state === Const.STATE_STANDBY) {
+      this.gameState.start()
 
-    //if (![this.player1, this.player2].filter(p => p != null).includes(socketId))
-    if (socketId !== this.player1 && socketId !== this.player2) {
-      return
+      if (socketId == this.player1) {
+        this.maru_player = this.player1
+      } else {
+        this.maru_player = this.player2
+      }
     }
 
     //this.playdata = [...this.playdata, data]
-    if (this.gameState.addInput({y: data.y, x: data.x, value: data.value})){
-      callback()
-    }
+    return this.gameState.addInput({y: data.y, x: data.x, value: data.value})
   }
 }

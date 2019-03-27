@@ -43,4 +43,26 @@ module.exports = class MarubatsuConst {
   static get SOCKET_LEAVE_PLAY_ROOM() {
     return "LEAVE_PLAY_ROOM"
   }
+
+
+  /** Gameステータス */
+  static get STATE_STANDBY() {
+    return "standby"
+  }
+  static get STATE_PLAYING() {
+    return "playing"
+  }
+  static get STATE_WIN_MARU() {
+    return "win_maru"
+  }
+  static get STATE_WIN_BATSU() {
+    return "win_batsu"
+  }
+  static get STATE_DRAW() {
+    return "draw"
+  }
+
+  static STATE_END(state) {
+    return (state === this.STATE_WIN_MARU || state === this.STATE_WIN_BATSU || state === this.STATE_DRAW)
+  }
 }

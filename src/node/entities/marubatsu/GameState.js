@@ -1,3 +1,5 @@
+const Const = require('../../../common/consts/MarubatsuConst');
+
 const INPUT_MARU   = "maru"
 const INPUT_BATSU  = "batsu"
 const INPUT_VALUES = [ INPUT_MARU, INPUT_BATSU ]
@@ -14,13 +16,21 @@ module.exports = class GameState {
       }
     }
 
-    this.gameEnd = false
+    this.state = Const.STATE_STANDBY
     this.message = null
-    this.winner  = null
+  }
+
+  start(){
+    this.state = Const.STATE_PLAYING
   }
 
   // 入力値を登録
   addInput({y, x, value = ""} = {}) {
+    console.log("addInput start")
+    if (this.state !== Const.STATE_PLAYING){
+      return
+    }
+
     if ((y < 0 || 3 <= y) && (x < 0 || 3 <= x)) {
       console.log("3x3の範囲を指定してください。")
       return false
@@ -35,17 +45,18 @@ module.exports = class GameState {
     }
 
     this.inputMap[y][x] = value;
-    this.judgeState();
+    this._judgeState();
+    console.log("addInput end")
     return true
   }
 
   // 〇×ゲームの状態判定
-  judgeState() {
+  _judgeState() {
     this._judgeHorizontal()
     this._judgeVertical()
     this._judgeDiagonal()
 
-    if (this.gameEnd) {
+    if (Const.STATE_END(this.state)) {
       console.log(this.message)
       return
     }
@@ -54,13 +65,13 @@ module.exports = class GameState {
     for (var y=0; y<this.inputMap.length; y++){
       for (var x=0; x<this.inputMap[y].length; x++){
         if (this.inputMap[y][x] === "") {
-          this.gameEnd = false
+          this.state = Const.STATE_PLAYING
           this.message = "プレイ継続"
           return
         }
       }
     }
-    this.gameEnd = true;
+    this.state = Const.STATE_DRAW
     this.message = "引き分け";
     console.log(this.message)
   }
@@ -113,21 +124,19 @@ module.exports = class GameState {
   }
 
   /**
-   * 
+   * 勝敗判定
    * @param {*} lineValue
    */
   _judgeWinner(lineValue = []) {
-    if (this.gameEnd) return
+    if (Const.STATE_END(this.state)) return
 
     if (lineValue.length === lineValue.filter(value => value === INPUT_MARU).length) {
-      this.gameEnd = true
+      this.state = Const.STATE_WIN_MARU
       this.message = "maruの勝ち"
-      this.winner = INPUT_MARU
     }
     else if (lineValue.length === lineValue.filter(value => value === INPUT_BATSU).length) {
-      this.gameEnd = true
+      this.state = Const.STATE_WIN_BATSU
       this.message = "batsuの勝ち"
-      this.winner = INPUT_BATSU
     }
   }
 }

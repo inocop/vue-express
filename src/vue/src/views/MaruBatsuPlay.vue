@@ -42,7 +42,7 @@
     }),
     methods: {
       postMaru(y, x, event) {
-        event.target.innerText = "maru"
+        //event.target.innerText = "maru"
         this.$socket.emit(this.$Const.SOCKET_POST_ROOM_DETAIL, this.id, {y: y, x: x, value: "maru"});
       },
       postBatsu(y, x){
