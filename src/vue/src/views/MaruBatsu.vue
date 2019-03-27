@@ -84,6 +84,7 @@
   </div>
 </template>
 
+
 <script>
   export default {
     data: () => ({
@@ -101,14 +102,14 @@
         }
 
         // 新規Roomの登録リクエスト
-        this.$socket.emit('CREATE_ROOM', { name: this.name });
+        this.$socket.emit(this.$Const.SOCKET_CREATE_ROOM, { name: this.name });
         this.name = ''
         this.invalid_name = ''
       }
     },
     mounted(){
       // レシーバー登録
-      this.$socket.on('CREATE_ROOM_RECEIVER', (error, room) => {
+      this.$socket.on(this.$Const.SOCKET_CREATE_ROOM_RECEIVER, (error, room) => {
         if (!error){
           this.gameRooms = [...this.gameRooms, room]
         } else {
@@ -117,7 +118,7 @@
       })
 
       // Roomリストをリクエスト
-      this.$socket.emit('GET_ROOMS', (error, gameRooms) => {
+      this.$socket.emit(this.$Const.SOCKET_GET_ROOMS, (error, gameRooms) => {
         if (!error) this.gameRooms = gameRooms
       })
     },

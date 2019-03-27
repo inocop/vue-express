@@ -1,5 +1,5 @@
-const Game = require('../../models/marubatsu/Game');
-const GameRooms = require('../../models/marubatsu/GameRooms');
+const Game = require('../../entities/marubatsu/Game');
+const GameRooms = require('../../entities/marubatsu/GameRooms');
 
 module.exports = class EntryRoom {
 
