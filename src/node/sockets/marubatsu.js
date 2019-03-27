@@ -37,7 +37,7 @@ module.exports = function(io) {
     socket.on(Const.SOCKET_GET_ROOM_DETAIL, (roomId, callback) => {
       console.log(Const.SOCKET_GET_ROOM_DETAIL);
 
-      targetRoom = gameRooms.getRoom(roomId)
+      let targetRoom = gameRooms.getRoom(roomId)
       new EntryRoom(targetRoom, socket.id).exec()
       .then(() => {
         socket.join(`playroom_${roomId}`);
@@ -50,8 +50,9 @@ module.exports = function(io) {
 
     // マルバツ送信
     socket.on(Const.SOCKET_POST_ROOM_DETAIL, (roomId, data) => {
-      console.log(Const.SOCKET_POST_ROOM_DETAIL);
-      targetRoom = gameRooms.getRoom(roomId)
+      console.log(Const.SOCKET_POST_ROOM_DETAIL)
+
+      let targetRoom = gameRooms.getRoom(roomId)
       if (!targetRoom) return
 
       targetRoom.setPlayData(socket.id, data, () => {
@@ -61,10 +62,10 @@ module.exports = function(io) {
 
     // マルバツルーム退出
     socket.on(Const.SOCKET_LEAVE_PLAY_ROOM, () => {
-      console.log(Const.SOCKET_LEAVE_PLAY_ROOM);
+      console.log(Const.SOCKET_LEAVE_PLAY_ROOM)
 
-      var joinRooms = marubatsu_socket.adapter.sids[socket.id];
-      for (var roomId in joinRooms) {
+      let joinRooms = marubatsu_socket.adapter.sids[socket.id];
+      for (let roomId in joinRooms) {
         if (roomId && roomId.startsWith('playroom_')) {
           socket.leave(roomId);
         }
