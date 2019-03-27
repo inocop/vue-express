@@ -4,13 +4,13 @@ const GameState = require('./GameState');
 module.exports = class Game {
 
   constructor (name) {
-    this.id          = null
-    this.name        = name
-    this.player1     = null
-    this.player2     = null
-    this.maru_player = null
-    this.playdata    = []
-    this.gameState   = new GameState()
+    this.id         = null
+    this.name       = name
+    this.player1    = null
+    this.player2    = null
+    this.maruPlayer = null
+    this.gameState  = new GameState()
+    this.lastInputPlayer = null
   }
 
   get params(){
@@ -30,19 +30,29 @@ module.exports = class Game {
     }
   }
 
+  getPlayData(){
+    return JSON.stringify(this.gameState.inputMap)
+  }
+
   setPlayData(socketId, data) {
     // 初回入力したプレイヤーを〇とする
     if (this.gameState.state === Const.STATE_STANDBY) {
       this.gameState.start()
 
-      if (socketId == this.player1) {
-        this.maru_player = this.player1
-      } else {
-        this.maru_player = this.player2
+      if (socketId === this.player1) {
+        this.maruPlayer = this.player1
+      }
+      else {
+        this.maruPlayer = this.player2
       }
     }
 
-    //this.playdata = [...this.playdata, data]
-    return this.gameState.addInput({y: data.y, x: data.x, value: data.value})
+    let value = (socketId === this.maruPlayer) ? "maru" : "batsu"
+    if (this.gameState.addInput({y: data.y, x: data.x, value: value})) {
+      this.lastInputPlayer = socketId
+      return true
+    }
+
+    return false
   }
 }

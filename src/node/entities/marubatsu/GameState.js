@@ -26,7 +26,6 @@ module.exports = class GameState {
 
   // 入力値を登録
   addInput({y, x, value = ""} = {}) {
-    console.log("addInput start")
     if (this.state !== Const.STATE_PLAYING){
       return
     }
@@ -46,7 +45,6 @@ module.exports = class GameState {
 
     this.inputMap[y][x] = value;
     this._judgeState();
-    console.log("addInput end")
     return true
   }
 

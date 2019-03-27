@@ -14,7 +14,7 @@ module.exports = class InputMaruBatsu {
 
   exec() {
     return new Promise((resolve, reject) => {
-      if (!this._validate_player()) {
+      if (!this._validateInput()) {
         return
       }
 
@@ -24,7 +24,7 @@ module.exports = class InputMaruBatsu {
     })
   }
 
-  _validate_player() {
+  _validateInput() {
     // 2人いる状態でないと入力不可
     if (!(this.game.player1 && this.game.player2)){
       return false
@@ -37,6 +37,9 @@ module.exports = class InputMaruBatsu {
     }
 
     // 連続での入力不可
+    if (this.game.lastInputPlayer === this.socketId) {
+      return false
+    }
 
     return true
   }

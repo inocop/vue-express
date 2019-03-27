@@ -44,7 +44,7 @@ module.exports = function(io) {
       new EntryRoom(targetRoom, socket.id).exec()
       .then(() => {
         socket.join(`playroom_${roomId}`);
-        callback(null, targetRoom.playdata)
+        callback(null, targetRoom.getPlayData())
       })
       .catch((error) => {
         callback({ message: error.message })
@@ -60,7 +60,7 @@ module.exports = function(io) {
 
       new InputMaruBatsu(targetRoom, socket.id, data).exec()
       .then(() => {
-        marubatsuSocket.in(`playroom_${roomId}`).emit(Const.SOCKET_POST_ROOM_DETAIL_RECEIVER, data)
+        marubatsuSocket.in(`playroom_${roomId}`).emit(Const.SOCKET_POST_ROOM_DETAIL_RECEIVER, targetRoom.getPlayData())
       })
     })
 

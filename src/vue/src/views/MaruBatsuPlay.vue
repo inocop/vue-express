@@ -1,33 +1,20 @@
 <template>
 <div>
   <p>{{id}}</p>
-  <button class="button is-primary" type="button" @click="postMaru">〇</button>
-  <button class="button is-primary" type="button" @click="postBatsu">×</button>
+  <button class="button is-primary" type="button">〇</button>
+  <button class="button is-primary" type="button">×</button>
 
+  <!-- 〇× -->
   <table class="table is-fullwidth is-bordered">
     <tbody>
-      <tr>
-        <td @click="postMaru(0, 0, $event)">&nbsp;</td>
-        <td @click="postMaru(0, 1, $event)">&nbsp;</td>
-        <td @click="postMaru(0, 2, $event)">&nbsp;</td>
-      </tr>
-      <tr>
-        <td @click="postMaru(1, 0, $event)">&nbsp;</td>
-        <td @click="postMaru(1, 1, $event)">&nbsp;</td>
-        <td @click="postMaru(1, 2, $event)">&nbsp;</td>
-      </tr>
-      <tr>
-        <td @click="postMaru(2, 0, $event)">&nbsp;</td>
-        <td @click="postMaru(2, 1, $event)">&nbsp;</td>
-        <td @click="postMaru(2, 2, $event)">&nbsp;</td>
+      <tr v-for="(row, index) in playdata" :key="index">
+        <td @click="postInput(index, 0, $event)">{{ row[0] }}</td>
+        <td @click="postInput(index, 1, $event)">{{ row[1] }}</td>
+        <td @click="postInput(index, 2, $event)">{{ row[2] }}</td>
       </tr>
     </tbody>
   </table>
 
-  <!-- 〇× -->
-  <div v-for="(row, index) in playdata" :key="index">
-    {{ row }}
-  </div>
 </div>
 </template>
 
@@ -41,12 +28,9 @@
       playdata: [],
     }),
     methods: {
-      postMaru(y, x, event) {
+      postInput(y, x, event) {
         //event.target.innerText = "maru"
-        this.$socket.emit(this.$Const.SOCKET_POST_ROOM_DETAIL, this.id, {y: y, x: x, value: "maru"});
-      },
-      postBatsu(y, x){
-        this.$socket.emit(this.$Const.SOCKET_POST_ROOM_DETAIL, this.id, {y: y, x: x, value: "batsu"});
+        this.$socket.emit(this.$Const.SOCKET_POST_ROOM_DETAIL, this.id, {y: y, x: x});
       }
     },
      beforeRouteLeave (to, from, next) {
@@ -57,13 +41,13 @@
     mounted(){
       // レシーバー登録
       this.$socket.on(this.$Const.SOCKET_POST_ROOM_DETAIL_RECEIVER, (playdata) => {
-        this.playdata = [...this.playdata, playdata]
+        this.playdata = JSON.parse(playdata)
         console.log(playdata)
       })
 
       this.$socket.emit(this.$Const.SOCKET_GET_ROOM_DETAIL, this.id, (error, playdata) => {
         if (!error) {
-          this.playdata = playdata;
+          this.playdata = JSON.parse(playdata)
         }else{
           console.log(error.message)
         }
