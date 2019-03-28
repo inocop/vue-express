@@ -29,8 +29,9 @@
     }),
     methods: {
       postInput(y, x, event) {
-        //event.target.innerText = "maru"
-        this.$socket.emit(this.$Const.SOCKET_POST_ROOM_DETAIL, this.id, {y: y, x: x});
+        if (!event.target.innerText) {
+          this.$socket.emit(this.$Const.SOCKET_POST_ROOM_DETAIL, this.id, {y: y, x: x});
+        }
       }
     },
      beforeRouteLeave (to, from, next) {
