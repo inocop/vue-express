@@ -4,6 +4,7 @@ RUN apt-get update \
 &&  apt-get install -y vim \
                        curl \
                        gnupg \
+                       git \
 # node install \
 &&  curl --silent --location https://deb.nodesource.com/setup_8.x | bash - \
 &&  apt-get install -y nodejs \

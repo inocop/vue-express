@@ -34,8 +34,15 @@ export default new Router({
         import(/* webpackChunkName: "marubatsu_play" */ "./views/MaruBatsuPlay.vue"),
       props: route => ({id: Number(route.params.id)}),
     },
-    { 
-      path: '*', 
+    {
+      path: "/aframe",
+      name: "aframe",
+      meta: { layout: 'none'},
+      component: () =>
+        import(/* webpackChunkName: "aframe" */ "./views/AFrame.vue")
+    },
+    {
+      path: '*',
       redirect: '/'
     },
   ]
