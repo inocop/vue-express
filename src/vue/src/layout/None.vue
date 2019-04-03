@@ -1,5 +1,3 @@
 <template>
-  <div id="none">
-    <router-view/>
-  </div>
+  <router-view/>
 </template>
