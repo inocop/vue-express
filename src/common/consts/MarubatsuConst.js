@@ -1,51 +1,57 @@
 module.exports = class MarubatsuConst {
-  /** socket.io用定数 */
-
   /**
-   * ルーム作成
+   * Client -> Server用socket.io定数
    */
+
+  /** ルーム作成 */
   static get SOCKET_CREATE_ROOM() {
-    return "CREATE_ROOM"
+    return "SOCKET_CREATE_ROOM"
   }
-  /**
-   * ルーム作成通知
-   */
-  static get SOCKET_CREATE_ROOM_RECEIVER() {
-    return "CREATE_ROOM_RECEIVER"
-  }
-  /**
-   * ルーム一覧取得
-   */
+  /** ルーム一覧取得 */
   static get SOCKET_GET_ROOMS() {
-    return "GET_ROOMS"
+    return "SOCKET_GET_ROOMS"
   }
-  /**
-   * ルーム入室
-   */
-  static get SOCKET_GET_ROOM_DETAIL() {
-    return "GET_ROOM_DETAIL"
+  /** マルバツゲーム入室 */
+  static get SOCKET_ENTRY_GAME() {
+    return "SOCKET_ENTRY_GAME"
   }
-  /**
-   * マルバツ送信
-   */
-  static get SOCKET_POST_ROOM_DETAIL() {
-    return "POST_ROOM_DETAIL"
+  /** マルバツの入力送信 */
+  static get SOCKET_INPUT_GAME() {
+    return "SOCKET_INPUT_GAME"
   }
-  /**
-   * マルバツ送信通知
-   */
-  static get SOCKET_POST_ROOM_DETAIL_RECEIVER() {
-    return "POST_ROOM_DETAIL_RECEIVER"
-  }
-  /**
-   * マルバツルーム退出
-   */
-  static get SOCKET_LEAVE_PLAY_ROOM() {
-    return "LEAVE_PLAY_ROOM"
+  /** マルバツ退出 */
+  static get SOCKET_LEAVE_GAME() {
+    return "SOCKET_LEAVE_GAME"
   }
 
 
-  /** Gameステータス */
+  /**
+   * Server -> Client用socket.io定数
+   */
+
+  /** ルーム一覧変更通知 */
+  static get SOCKET_CHANGE_ROOMS_EVENT() {
+    return "SOCKET_CHANGE_ROOMS_EVENT"
+  }
+  /** マルバツの状態変更通知 */
+  static get SOCKET_CHANGE_GAME_EVENT() {
+    return "SOCKET_CHANGE_GAME_EVENT"
+  }
+
+  /** イベント種別 */
+  static get EVENT_CREATED() {
+    return "created"
+  }
+  static get EVENT_UPDATED() {
+    return "updated"
+  }
+  static get EVENT_DELETED() {
+    return "deleted"
+  }
+
+  /**
+   *  Gameステータス
+   */
   static get STATE_STANDBY() {
     return "standby"
   }

@@ -74,7 +74,7 @@
           <!-- Room一覧の表示 -->
           <tr v-for="(room, index) in gameRooms" :key="index">
             <th>{{ room.name }}</th>
-            <th>新規</th>
+            <th>{{ getRoomState(room.playerCount) }}</th>
             <th><router-link :to="{name: 'marubatsu_play', params: { id: room.id }}">入室</router-link></th>
           </tr>
         </tbody>
@@ -105,11 +105,22 @@
         this.$socket.emit(this.$Const.SOCKET_CREATE_ROOM, { name: this.name });
         this.name = ''
         this.invalid_name = ''
+      },
+      getRoomState(playerCount) {
+        if (playerCount === 0) {
+          return "新規"
+        }
+        else if (playerCount === 1){
+          return "待機中"
+        }
+        else {
+          return "対戦中"
+        }
       }
     },
     mounted(){
       // レシーバー登録
-      this.$socket.on(this.$Const.SOCKET_CREATE_ROOM_RECEIVER, (error, room) => {
+      this.$socket.on(this.$Const.SOCKET_CHANGE_ROOMS_EVENT, (error, room) => {
         if (!error){
           this.gameRooms = [...this.gameRooms, room]
         } else {

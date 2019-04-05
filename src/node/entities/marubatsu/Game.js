@@ -14,7 +14,10 @@ module.exports = class Game {
   }
 
   get params(){
-    return { id: this.id, name: this.name }
+    return { id: this.id,
+             name: this.name,
+             playerCount: [this.player1, this.player2].filter(p => p != null).length
+           }
   }
 
   get isGameEnd(){
