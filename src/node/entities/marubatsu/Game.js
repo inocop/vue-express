@@ -1,4 +1,4 @@
-const Const = require('../../../common/consts/MarubatsuConst');
+const Const = require('../../../common/consts/GameConst');
 const GameState = require('./GameState');
 
 module.exports = class Game {

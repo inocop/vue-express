@@ -72,10 +72,11 @@
 
         <tbody>
           <!-- Room一覧の表示 -->
-          <tr v-for="(room, index) in gameRooms" :key="index">
+          <tr v-for="(room) in gameRooms" :key="room.id">
             <th>{{ room.name }}</th>
             <th>{{ getRoomState(room.playerCount) }}</th>
-            <th><router-link :to="{name: 'marubatsu_play', params: { id: room.id }}">入室</router-link></th>
+            <th v-if="room.playerCount < 2" ><router-link :to="{name: 'marubatsu_play', params: { id: room.id }}">入室</router-link></th>
+            <th v-else></th>
           </tr>
         </tbody>
       </table>
@@ -102,7 +103,7 @@
         }
 
         // 新規Roomの登録リクエスト
-        this.$socket.emit(this.$Const.SOCKET_CREATE_ROOM, { name: this.name });
+        this.$socket.emit(this.$GameConst.SOCKET_CREATE_ROOM, { name: this.name });
         this.name = ''
         this.invalid_name = ''
       },
@@ -120,16 +121,24 @@
     },
     mounted(){
       // レシーバー登録
-      this.$socket.on(this.$Const.SOCKET_CHANGE_ROOMS_EVENT, (error, room) => {
-        if (!error){
+      this.$socket.on(this.$GameConst.SOCKET_CHANGE_ROOMS_NOTIFY, (notify, room) => {
+        if (notify.type === this.$NotifyConst.NOTIFY_ERRORED) {
+          this.invalid_name = notify.message
+        }
+        else if (notify.type === this.$NotifyConst.NOTIFY_CREATED) {
           this.gameRooms = [...this.gameRooms, room]
-        } else {
-          this.invalid_name = error.message
+        }
+        else if (notify.type === this.$NotifyConst.NOTIFY_UPDATED) {
+          const updateIndex = this.gameRooms.findIndex((r) => r.id === room.id)
+          this.$set(this.gameRooms, updateIndex, room)
+        }
+        else if (notify.type === this.$NotifyConst.NOTIFY_DELETED) {
+
         }
       })
 
       // Roomリストをリクエスト
-      this.$socket.emit(this.$Const.SOCKET_GET_ROOMS, (error, gameRooms) => {
+      this.$socket.emit(this.$GameConst.SOCKET_GET_ROOMS, (error, gameRooms) => {
         if (!error) this.gameRooms = gameRooms
       })
     },

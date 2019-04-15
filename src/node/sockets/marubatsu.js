@@ -1,5 +1,6 @@
-
-const Const = require('../../common/consts/MarubatsuConst')
+const NotifyConst = require('../../common/consts/NotifyConst')
+const Notify = require('../entities/Notify')
+const GameConst = require('../../common/consts/GameConst')
 const Game = require('../entities/marubatsu/Game')
 const GameRooms = require('../entities/marubatsu/GameRooms')
 const EntryRoom = require('../usecases/marubatsu/EntryRoom')
@@ -14,29 +15,31 @@ module.exports = function(io) {
     console.log(`a user connected[id:${ socket.id }]`)
 
     // ルーム作成
-    socket.on(Const.SOCKET_CREATE_ROOM, (data) => {
-      console.log(Const.SOCKET_CREATE_ROOM);
+    socket.on(GameConst.SOCKET_CREATE_ROOM, (data) => {
+      console.log(GameConst.SOCKET_CREATE_ROOM);
       console.log(`posted[name:${ data.name }]`)
 
       game = new Game(data.name)
       gameRooms.addRoom(game)
       .then(() => {
-        marubatsuSocket.emit(Const.SOCKET_CHANGE_ROOMS_EVENT, null, game.params)
+        const notify = new Notify(NotifyConst.NOTIFY_CREATED)
+        marubatsuSocket.emit(GameConst.SOCKET_CHANGE_ROOMS_NOTIFY, notify, game.params)
       })
       .catch((error) => {
-        marubatsuSocket.to(socket.id).emit(Const.SOCKET_CHANGE_ROOMS_EVENT, { message: error.message })
+        const notify = new Notify(EventConst.NOTIFY_ERRORED, error.message)
+        marubatsuSocket.to(socket.id).emit(GameConst.SOCKET_CHANGE_ROOMS_NOTIFY, notify)
       })
     })
 
     // ルーム一覧取得
-    socket.on(Const.SOCKET_GET_ROOMS, (callback) => {
-      console.log(Const.SOCKET_GET_ROOMS);
+    socket.on(GameConst.SOCKET_GET_ROOMS, (callback) => {
+      console.log(GameConst.SOCKET_GET_ROOMS);
       callback(null, gameRooms.getRoomNameList())
     })
 
     // マルバツルーム入室
-    socket.on(Const.SOCKET_ENTRY_GAME, (roomId, callback) => {
-      console.log(Const.SOCKET_ENTRY_GAME);
+    socket.on(GameConst.SOCKET_ENTRY_GAME, (roomId, callback) => {
+      console.log(GameConst.SOCKET_ENTRY_GAME);
 
       let targetRoom = gameRooms.getRoom(roomId)
       if (!targetRoom) return
@@ -45,6 +48,8 @@ module.exports = function(io) {
       .then(() => {
         socket.join(`playroom_${roomId}`);
         callback(null, targetRoom.getPlayData())
+        const notify = new Notify(NotifyConst.NOTIFY_UPDATED)
+        marubatsuSocket.emit(GameConst.SOCKET_CHANGE_ROOMS_NOTIFY, notify, targetRoom.params)
       })
       .catch((error) => {
         callback({ message: error.message })
@@ -52,21 +57,33 @@ module.exports = function(io) {
     })
 
     // マルバツ送信
-    socket.on(Const.SOCKET_INPUT_GAME, (roomId, data) => {
-      console.log(Const.SOCKET_INPUT_GAME)
+    socket.on(GameConst.SOCKET_INPUT_GAME, (roomId, data) => {
+      console.log(GameConst.SOCKET_INPUT_GAME)
 
       let targetRoom = gameRooms.getRoom(roomId)
       if (!targetRoom) return
 
       new InputMaruBatsu(targetRoom, socket.id, data).exec()
       .then(() => {
-        marubatsuSocket.in(`playroom_${roomId}`).emit(Const.SOCKET_CHANGE_GAME_STATE_EVENT, targetRoom.getPlayData())
+        if (targetRoom.isGameEnd) {
+          // ゲーム終了通知
+          const notify = new Notify(NotifyConst.NOTIFY_UPDATED, targetRoom.gameState.message)
+          marubatsuSocket.in(`playroom_${roomId}`).emit(GameConst.SOCKET_CHANGE_GAME_NOTIFY, notify, targetRoom.getPlayData())
+
+          // Room一覧から削除
+          gameRooms.deleteRoom(targetRoom.id)
+        }
+        else {
+          // ゲーム終了継続
+          const notify = new Notify(NotifyConst.NOTIFY_CREATED)
+          marubatsuSocket.in(`playroom_${roomId}`).emit(GameConst.SOCKET_CHANGE_GAME_NOTIFY, notify, targetRoom.getPlayData())
+        }
       })
     })
 
     // マルバツルーム退出
-    socket.on(Const.SOCKET_LEAVE_GAME, () => {
-      console.log(Const.SOCKET_LEAVE_GAME)
+    socket.on(GameConst.SOCKET_LEAVE_GAME, () => {
+      console.log(GameConst.SOCKET_LEAVE_GAME)
 
       let joinRooms = marubatsuSocket.adapter.sids[socket.id];
       for (let roomId in joinRooms) {

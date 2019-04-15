@@ -1,4 +1,4 @@
-const Const = require('../../../common/consts/MarubatsuConst');
+const Const = require('../../../common/consts/GameConst');
 
 const INPUT_MARU   = "maru"
 const INPUT_BATSU  = "batsu"

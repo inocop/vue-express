@@ -15,13 +15,19 @@ module.exports = class GameRooms {
         return
       }
 
-      game.id = this.gameRooms.length
+      if (this.gameRooms.length === 0) {
+        game.id = 0
+      }
+      else {
+        game.id = Math.max(...this.gameRooms.map((r) => r.id)) + 1
+      }
       this.gameRooms.push(game)
       resolve()
     })
   }
 
-  getRoom(index) {
+  getRoom(roomId) {
+    const index = this.gameRooms.findIndex((r) => r.id === roomId)
     return this.gameRooms[index]
   }
 
@@ -29,7 +35,8 @@ module.exports = class GameRooms {
     return Object.keys(this.gameRooms).map(id => this.gameRooms[id].params)
   }
 
-  deleteRoom(index) {
-    this.gameRooms.splice(index, 1)
+  deleteRoom(roomId) {
+    const deleteIndex = this.gameRooms.findIndex((r) => r.id === roomId)
+    this.gameRooms.splice(deleteIndex, 1)
   }
 }

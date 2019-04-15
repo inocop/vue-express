@@ -1,4 +1,4 @@
-module.exports = class MarubatsuConst {
+module.exports = class GameConst {
   /**
    * Client -> Server用socket.io定数
    */
@@ -30,42 +30,32 @@ module.exports = class MarubatsuConst {
    */
 
   /** ルーム一覧変更通知 */
-  static get SOCKET_CHANGE_ROOMS_EVENT() {
-    return "SOCKET_CHANGE_ROOMS_EVENT"
+  static get SOCKET_CHANGE_ROOMS_NOTIFY() {
+    return "SOCKET_CHANGE_ROOMS_NOTIFY"
   }
   /** マルバツの状態変更通知 */
-  static get SOCKET_CHANGE_GAME_EVENT() {
-    return "SOCKET_CHANGE_GAME_EVENT"
+  static get SOCKET_CHANGE_GAME_NOTIFY() {
+    return "SOCKET_CHANGE_GAME_NOTIFY"
   }
 
-  /** イベント種別 */
-  static get EVENT_CREATED() {
-    return "created"
-  }
-  static get EVENT_UPDATED() {
-    return "updated"
-  }
-  static get EVENT_DELETED() {
-    return "deleted"
-  }
 
   /**
    *  Gameステータス
    */
   static get STATE_STANDBY() {
-    return "standby"
+    return "STATE_STANDBY"
   }
   static get STATE_PLAYING() {
-    return "playing"
+    return "STATE_PLAYING"
   }
   static get STATE_WIN_MARU() {
-    return "win_maru"
+    return "STATE_WIN_MARU"
   }
   static get STATE_WIN_BATSU() {
-    return "win_batsu"
+    return "STATE_WIN_BATSU"
   }
   static get STATE_DRAW() {
-    return "draw"
+    return "STATE_DRAW"
   }
 
   static STATE_END(state) {

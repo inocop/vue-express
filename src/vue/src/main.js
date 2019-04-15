@@ -9,9 +9,11 @@ import NoneLayout    from "./layout/None.vue";
 Vue.component('default-layout', DefaultLayout);
 Vue.component('none-layout',    NoneLayout);
 
-// 定数クラスをロード
-import Const from '../../common/consts/MarubatsuConst'
-Vue.prototype.$Const = Const
+// commonクラスをロード
+import GameConst from '../../common/consts/GameConst'
+import NotifyConst from '../../common/consts/NotifyConst'
+Vue.prototype.$GameConst = GameConst
+Vue.prototype.$NotifyConst = NotifyConst
 
 // socket.ioをロード
 import io from 'socket.io-client';
