@@ -8,13 +8,13 @@
     </a-assets>
 
     <a-camera position="0 1.6 -4" rotation="0 180 0" id="player1">
-      <a-cursor fuse=true fuse-timeout=1000></a-cursor>
+      <a-cursor fuse=false fuse-timeout=1000></a-cursor>
       <a-box color="#998877"></a-box>
       <a-text position="0 1 0" scale="3 3 0" rotation="0 0 0" value="Player1" color="black"></a-text>
     </a-camera>
 
     <a-camera position="0 1.6 4" id="player2">
-      <a-cursor fuse=true fuse-timeout=1000></a-cursor>
+      <a-cursor fuse=false fuse-timeout=1000></a-cursor>
       <a-cylinder color="#114499"></a-cylinder>
       <a-text position="0 1 0" scale="3 3 0" rotation="0 180 0" value="Player2" color="black"></a-text>
     </a-camera>
