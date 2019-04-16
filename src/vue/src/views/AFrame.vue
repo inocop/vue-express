@@ -4,6 +4,7 @@
       <img src="/static/images/tile.png" id="square">
       <img src="/static/images/maru.png" id="circle">
       <img src="/static/images/batsu.png" id="cross">
+      <img src="https://cdn.aframe.io/360-image-gallery-boilerplate/img/city.jpg" id="city">
     </a-assets>
 
     <a-camera position="0 1.6 -4" rotation="0 180 0" id="player1">
@@ -14,7 +15,7 @@
 
     <a-camera position="0 1.6 4" id="player2">
       <a-cursor fuse=true fuse-timeout=1000></a-cursor>
-      <a-cylinder color="#114499" ></a-cylinder>
+      <a-cylinder color="#114499"></a-cylinder>
       <a-text position="0 1 0" scale="3 3 0" rotation="0 180 0" value="Player2" color="black"></a-text>
     </a-camera>
 
@@ -30,7 +31,7 @@
       <a-plane id="square8" @click="postInput(2, 2, $event)" src="#square" position="1 0 1" rotation="-90 0 0" width="1" height="1" color="#EEEEEE"></a-plane>
     </a-entity>
 
-    <a-sky color="#ECECEC"></a-sky>
+    <a-sky color="#ECECEC" src="#city"></a-sky>
   </a-scene>
 </template>
 
